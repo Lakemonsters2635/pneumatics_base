@@ -11,38 +11,38 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ClawPneumaticSubsystem extends SubsystemBase {
-  /** Creates a new CompressorSubsystem. */
   private DoubleSolenoid doubleSolenoid;
-  // private boolean isClosed;
+  private Value OPEN = Value.kReverse;
+  private Value CLOSED = Value.kForward;
 
   public ClawPneumaticSubsystem() {
     // define the constants in the constants folder
-    //doubleSolenoid = RobotContainer.m_pneumaticHub.makeDoubleSolenoid(Constants.CLOSE_CHANNEL, Constants.OPEN_CHANNEL);
     doubleSolenoid = new DoubleSolenoid(
       Constants.PNEUMATIC_HUB_CANID, 
       PneumaticsModuleType.CTREPCM, 
       Constants.CLOSE_CHANNEL, 
-      Constants.OPEN_CHANNEL);
-    // isClosed = true;
+      Constants.OPEN_CHANNEL
+    );
+    // doubleSolenoid is initialized with Value.kOff
+    // toggle doesn't work unless the state is kForward or kReverse
+    // so we need to initialize it
+    doubleSolenoid.set(CLOSED);
   }
   
   public boolean getIsClosed() {
-    return doubleSolenoid.get() == Value.kForward;
+    return doubleSolenoid.get() == CLOSED;
   }
 
   public void grabberOpen() {
-		doubleSolenoid.set(Value.kReverse);
-    // isClosed = false;
+		doubleSolenoid.set(OPEN);
 	}
 
   public void togglePosition() {
-    doubleSolenoid.set(getIsClosed() ? Value.kReverse : Value.kForward);
-    // isClosed = !isClosed;
+    doubleSolenoid.toggle();
   }
   
 	public void grabberClose() {
-		doubleSolenoid.set(Value.kForward);
-    // isClosed = true;
+		doubleSolenoid.set(CLOSED);
 	}
 
   @Override
