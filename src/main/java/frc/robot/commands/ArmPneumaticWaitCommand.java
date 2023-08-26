@@ -10,6 +10,22 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
   * Moves lower arm between retracted and extended configurations
+  * 
+  * The delays for pneumatic commands are for timing purposes.  When pneumatic commands
+  * fire, the command ends immediately since the command is sent to the controller which
+  * then commands the valves to open and the pneumatic cylinders to go to the commanded position.
+  * However, as the pneumatics are physical systems, it takes some time for the pneumantics
+  * to actuate.  If there are other commands which are scripted to run sequentially after 
+  * the pneumatics transition and those commands require the pneumatics to be in that other
+  * state in order to work properly, there must be some mechanism to delay this command from 
+  * finishing until you know the state of the robot is appropriate for the next command to complete.
+  * In this command, we do that with a wait command which was determined experimentally.
+  * Other methods could include adding a sensor to detect when the pneumatic transition has completed.
+  * If this is done, it would likely be good to add a sensor to the pneumatic subsystem command 
+  * so that the subsystem could be queried to see if it is in the proper state.  Note that 
+  * care should be taken when doing this and possibly a backup timeout should be implemented
+  * otherwise if the sensor is faulty and does not detect the transition, then the robot doesn't
+  * get stuck waiting for a sensor to trigger which will never trigger since it is faulted.
  */
 public class ArmPneumaticWaitCommand extends CommandBase {
   PneumaticsSubsystem m_PneumaticsSubsystem;
@@ -18,8 +34,8 @@ public class ArmPneumaticWaitCommand extends CommandBase {
   Timer m_ticktock = new Timer(); 
   double m_startTime;
   double m_endTime;
-  double m_delay_retract = 1.0; // seconds // TODO: THIS IS HORRIBLE IT SUCKS COPYING
-  double m_delay_extend = 1.5; // TODO
+  double m_delay_retract = 1.0; // seconds, retract vs extend can require different times to execute.
+  double m_delay_extend = 1.5;  // seconds, retract vs extend can require different times to execute.
   boolean is_extending; 
 
   /** Creates a new IntakePneumaticCommand. */
